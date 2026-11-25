@@ -1,17 +1,33 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Grid, Container, Button, TextField } from '@mui/material';
+import {
+    Box,
+    Typography,
+    Grid,
+    Container,
+    Button,
+    TextField,
+    CircularProgress
+} from '@mui/material';
 import Input from '../components/Input';
 import WorkoutCard from '../components/WorkoutCard';
-import { createWorkout, getWorkouts, deleteWorkout, updateWorkout } from '../services/workouts';
-import { useAuthContext } from '../hooks/useAuthContext';
+import {
+    createWorkout,
+    getWorkouts,
+    deleteWorkout,
+    updateWorkout
+} from '../services/workouts';
+import { AuthContext } from '../context/AuthContext';
 
 const Workouts: React.FC = () => {
     const navigate = useNavigate();
-    const { user } = useAuthContext();
+    const { user } = useContext(AuthContext);
+
     const [isLoading, setIsLoading] = useState(true);
     const [workouts, setWorkouts] = useState<any[]>([]);
     const [error, setError] = useState<string | null>(null);
+
     const [workoutData, setWorkoutData] = useState({
         date: new Date(),
         type: '',
@@ -23,11 +39,13 @@ const Workouts: React.FC = () => {
     useEffect(() => {
         const fetchWorkouts = async () => {
             setIsLoading(true);
+
             try {
                 if (!user) {
                     navigate('/');
                     return;
                 }
+
                 const fetchedWorkouts = await getWorkouts(user._id);
                 setWorkouts(fetchedWorkouts);
             } catch (error: any) {
@@ -38,18 +56,27 @@ const Workouts: React.FC = () => {
             }
         };
 
-        if (user) {
-            fetchWorkouts();
-        }
+        fetchWorkouts();
     }, [user, navigate]);
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
         const { name, value } = event.target;
-        setWorkoutData({ ...workoutData, [name]: parseFloat(value) || value });
+
+        setWorkoutData({
+            ...workoutData,
+            [name]: ['duration', 'distance', 'caloriesBurned'].includes(name)
+                ? (value === '' ? 0 : Number(value))
+                : value,
+        });
     };
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setWorkoutData({ ...workoutData, date: new Date(event.target.value) });
+        setWorkoutData({
+            ...workoutData,
+            date: new Date(event.target.value),
+        });
     };
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -59,10 +86,19 @@ const Workouts: React.FC = () => {
 
         try {
             if (!user) {
-                throw new Error("User not authenticated");
+                throw new Error('User not authenticated');
             }
+
             await createWorkout(user._id, workoutData);
-            setWorkoutData({ date: new Date(), type: '', duration: 0, distance: 0, caloriesBurned: 0 });
+
+            setWorkoutData({
+                date: new Date(),
+                type: '',
+                duration: 0,
+                distance: 0,
+                caloriesBurned: 0,
+            });
+
             const updatedWorkouts = await getWorkouts(user._id);
             setWorkouts(updatedWorkouts);
         } catch (error: any) {
@@ -73,12 +109,18 @@ const Workouts: React.FC = () => {
         }
     };
 
-
     const handleDelete = async (workoutId: string) => {
+        if (!user) {
+            navigate('/');
+            return;
+        }
+
         setIsLoading(true);
         setError(null);
+
         try {
             await deleteWorkout(workoutId);
+
             const updatedWorkouts = await getWorkouts(user._id);
             setWorkouts(updatedWorkouts);
         } catch (error: any) {
@@ -89,11 +131,21 @@ const Workouts: React.FC = () => {
         }
     };
 
-    const handleEdit = async (workoutId: string, updatedWorkoutData: any) => {
+    const handleEdit = async (
+        workoutId: string,
+        updatedWorkoutData: any
+    ) => {
+        if (!user) {
+            navigate('/');
+            return;
+        }
+
         setIsLoading(true);
         setError(null);
+
         try {
             await updateWorkout(workoutId, updatedWorkoutData);
+
             const updatedWorkouts = await getWorkouts(user._id);
             setWorkouts(updatedWorkouts);
         } catch (error: any) {
@@ -105,16 +157,34 @@ const Workouts: React.FC = () => {
     };
 
     if (isLoading) {
-        return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}><CircularProgress /></Box>;
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                }}
+            >
+                <CircularProgress />
+            </Box>
+        );
     }
 
     if (error) {
-        return <Typography variant="h6" color="error">Error: {error}</Typography>;
+        return (
+            <Typography variant="h6" color="error">
+                Error: {error}
+            </Typography>
+        );
     }
 
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Typography variant="h4" component="h1" gutterBottom>Workouts</Typography>
+            <Typography variant="h4" component="h1" gutterBottom>
+                Workouts
+            </Typography>
+
             <form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
@@ -131,25 +201,61 @@ const Workouts: React.FC = () => {
                             margin="normal"
                         />
                     </Grid>
+
                     <Grid item xs={12}>
-                        <Input label="Type" name="type" value={workoutData.type} onChange={handleInputChange} required />
+                        <Input
+                            label="Type"
+                            name="type"
+                            value={workoutData.type}
+                            onChange={handleInputChange}
+                            required
+                        />
                     </Grid>
+
                     <Grid item xs={12}>
-                        <Input label="Duration (minutes)" name="duration" value={workoutData.duration} onChange={handleInputChange} type="number" required />
+                        <Input
+                            label="Duration (minutes)"
+                            name="duration"
+                            value={workoutData.duration}
+                            onChange={handleInputChange}
+                            type="number"
+                            required
+                        />
                     </Grid>
+
                     <Grid item xs={12}>
-                        <Input label="Distance (km)" name="distance" value={workoutData.distance} onChange={handleInputChange} type="number" />
+                        <Input
+                            label="Distance (km)"
+                            name="distance"
+                            value={workoutData.distance}
+                            onChange={handleInputChange}
+                            type="number"
+                        />
                     </Grid>
+
                     <Grid item xs={12}>
-                        <Input label="Calories Burned" name="caloriesBurned" value={workoutData.caloriesBurned} onChange={handleInputChange} type="number" />
+                        <Input
+                            label="Calories Burned"
+                            name="caloriesBurned"
+                            value={workoutData.caloriesBurned}
+                            onChange={handleInputChange}
+                            type="number"
+                        />
                     </Grid>
+
                     <Grid item xs={12}>
-                        <Button type="submit" variant="contained" color="primary" disabled={isLoading}>
-                            {isLoading ? 'Logging...' : 'Log Workout'}
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            disabled={isLoading}
+                        >
+                            Log Workout
                         </Button>
                     </Grid>
                 </Grid>
             </form>
+
             <Grid container spacing={4} mt={4}>
                 {workouts.map((workout: any) => (
                     <Grid item xs={12} md={6} key={workout._id}>
@@ -162,9 +268,8 @@ const Workouts: React.FC = () => {
                             caloriesBurned={workout.caloriesBurned}
                             onDelete={() => handleDelete(workout._id)}
                             onEdit={(id) => {
-                                // Implement Edit Functionality here if needed for future expansion.
-                                // This would involve opening a modal or form to allow modification of workout details,
-                                // followed by a call to handleEdit.
+                                // Editing requires an edit form or dialog.
+                                // Keep the existing callback unchanged for now.
                             }}
                         />
                     </Grid>
@@ -175,4 +280,3 @@ const Workouts: React.FC = () => {
 };
 
 export default Workouts;
-```

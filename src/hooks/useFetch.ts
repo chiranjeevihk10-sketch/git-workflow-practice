@@ -52,4 +52,3 @@ const useFetch = <T>(options: FetchOptions): {
 };
 
 export default useFetch;
-```

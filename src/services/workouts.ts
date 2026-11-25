@@ -51,4 +51,3 @@ const deleteWorkout = async (workoutId: string): Promise<ApiResponse<void>> => {
 };
 
 export { createWorkout, getWorkouts, updateWorkout, deleteWorkout };
-```

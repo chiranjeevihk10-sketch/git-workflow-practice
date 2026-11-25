@@ -1,37 +1,42 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, Grid, Box, TextField, Button, CircularProgress } from '@mui/material';
-import { useAuthContext } from '../hooks/useAuthContext';
+import { Container, Typography, Grid, Box, Button, CircularProgress } from '@mui/material';
+import { AuthContext } from '../context/AuthContext';
 import Input from '../components/Input';
 import { updateUserProfile, getUserProfile } from '../services/api';
 
 const Profile: React.FC = () => {
     const navigate = useNavigate();
-    const { user } = useAuthContext();
+    const { user } = useContext(AuthContext);
+
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [userProfile, setUserProfile] = useState<any | null>(null);
     const [updatedProfile, setUpdatedProfile] = useState<any | null>(null);
     const [isEditing, setIsEditing] = useState(false);
 
-
     useEffect(() => {
         const fetchUserProfile = async () => {
             setIsLoading(true);
+
             try {
-                if (user) {
-                    const data = await getUserProfile(user._id);
-                    setUserProfile(data);
-                    setUpdatedProfile({...data});
+                if (!user) {
+                    navigate('/');
+                    return;
                 }
+
+                const data = await getUserProfile(user._id);
+                setUserProfile(data);
+                setUpdatedProfile({ ...data });
             } catch (error) {
-                setError("Failed to load profile");
+                setError('Failed to load profile');
             } finally {
                 setIsLoading(false);
             }
         };
+
         fetchUserProfile();
-    }, [user]);
+    }, [user, navigate]);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -46,6 +51,7 @@ const Profile: React.FC = () => {
         try {
             if (user && updatedProfile) {
                 await updateUserProfile(user._id, updatedProfile);
+
                 const updatedUserData = await getUserProfile(user._id);
                 setUserProfile(updatedUserData);
                 setUpdatedProfile(updatedUserData);
@@ -59,7 +65,11 @@ const Profile: React.FC = () => {
     };
 
     if (isLoading) {
-        return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}><CircularProgress /></Box>;
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
     if (error) {
@@ -68,22 +78,54 @@ const Profile: React.FC = () => {
 
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Typography variant="h4" component="h1" gutterBottom>Profile</Typography>
-            {userProfile && (
+            <Typography variant="h4" component="h1" gutterBottom>
+                Profile
+            </Typography>
+
+            {userProfile && updatedProfile && (
                 <form onSubmit={handleSubmit}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Input label="Name" name="name" value={isEditing ? updatedProfile.name : userProfile.name} onChange={handleInputChange} required />
+                            <Input
+                                label="Name"
+                                name="name"
+                                value={isEditing ? updatedProfile.name : userProfile.name}
+                                onChange={handleInputChange}
+                                required
+                            />
                         </Grid>
+
                         <Grid item xs={12}>
-                            <Input label="Email" name="email" value={isEditing ? updatedProfile.email : userProfile.email} onChange={handleInputChange} type="email" required />
+                            <Input
+                                label="Email"
+                                name="email"
+                                value={isEditing ? updatedProfile.email : userProfile.email}
+                                onChange={handleInputChange}
+                                type="email"
+                                required
+                            />
                         </Grid>
+
                         <Grid item xs={12}>
-                            <Button variant="contained" onClick={() => setIsEditing(!isEditing)} >
+                            <Button
+                                variant="contained"
+                                onClick={() => {
+                                    if (isEditing) {
+                                        setUpdatedProfile({ ...userProfile });
+                                    }
+                                    setIsEditing(!isEditing);
+                                }}
+                            >
                                 {isEditing ? 'Cancel' : 'Edit Profile'}
                             </Button>
+
                             {isEditing && (
-                                <Button type="submit" variant="contained" color="primary" disabled={isLoading}>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={isLoading}
+                                >
                                     {isLoading ? 'Updating...' : 'Update Profile'}
                                 </Button>
                             )}
@@ -96,4 +138,3 @@ const Profile: React.FC = () => {
 };
 
 export default Profile;
-```

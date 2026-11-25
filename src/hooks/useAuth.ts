@@ -1,38 +1,41 @@
-import { useContext, useState, useEffect } from 'react';
+
+import { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { login, logout, LoginRequest } from '../services/auth';
+import { login as loginUser } from '../services/auth';
+import type { LoginRequest } from '../types/api';
 
-interface User {
-  _id: string;
-  email: string;
-}
+const useAuth = () => {
+  const auth = useContext(AuthContext);
 
-const useAuth = (): {
-  user: User | null;
-  login: (credentials: LoginRequest) => Promise<void>;
-  logout: () => void;
-  isAuthenticated: boolean;
-  loading: boolean;
-  error: string | null;
-} => {
-  const { user: contextUser, setUser, setToken, setLoading, setError } = useContext(AuthContext);
+  if (!auth) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+
+  const { user, setUser, setToken } = auth;
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const login = async (credentials: LoginRequest) => {
     setLoading(true);
     setError(null);
+
     try {
-      const response = await login(credentials);
+      const response = await loginUser(credentials);
+
       if (response.success && response.data) {
-        setUser(response.data.user);
+        const loggedInUser = {
+          _id: response.data.user._id,
+          email: credentials.email,
+        };
+
+        setUser(loggedInUser);
         setToken(response.data.token);
-        localStorage.setItem('token', response.data.token);
       } else {
-        setError(response.error);
+        setError(response.error || 'Login failed');
       }
-    } catch (err: any) {
-      setError(err.message || 'Login failed');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -44,10 +47,14 @@ const useAuth = (): {
     localStorage.removeItem('token');
   };
 
-  const isAuthenticated = !!contextUser;
-
-  return { user: contextUser, login, logout, isAuthenticated, loading, error };
+  return {
+    user,
+    login,
+    logout,
+    isAuthenticated: Boolean(user),
+    loading,
+    error,
+  };
 };
 
 export default useAuth;
-```

@@ -1,5 +1,7 @@
+
 :root {
   --primary-color: #008000;
+  --primary-hover-color: #006400;
   --secondary-color: #b388ff;
   --text-color: #333;
   --background-color: #f4f4f4;
@@ -50,7 +52,7 @@ a {
 }
 
 a:hover {
-  color: darken(var(--primary-color), 10%);
+  color: var(--primary-hover-color);
 }
 
 button {
@@ -63,7 +65,7 @@ button {
 }
 
 button:hover {
-  background-color: darken(var(--primary-color), 10%);
+  background-color: var(--primary-hover-color);
   color: white;
 }
 
@@ -72,7 +74,6 @@ button:hover {
   margin: 0 auto;
   padding: 2rem;
 }
-
 
 @media (max-width: 768px) {
   .container {
@@ -90,7 +91,7 @@ button:hover {
   h3 {
     font-size: 1.5rem;
   }
-  
+
   h4 {
     font-size: 1.25rem;
   }
@@ -101,7 +102,7 @@ button:hover {
     padding: 0.5rem;
   }
 
-    h1 {
+  h1 {
     font-size: 1.75rem;
   }
 
@@ -112,12 +113,10 @@ button:hover {
   h3 {
     font-size: 1.25rem;
   }
-    h4 {
+
+  h4 {
     font-size: 1rem;
   }
 }
 
-
 /* Add more styles as needed, ensuring responsiveness and accessibility */
-
-```

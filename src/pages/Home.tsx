@@ -8,7 +8,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext)!;
 
   const handleSignUp = () => {
     navigate('/signup');
@@ -75,4 +75,3 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-```

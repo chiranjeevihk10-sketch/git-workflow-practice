@@ -84,4 +84,3 @@ const useForm = (initialSchema: FormSchema): {
 };
 
 export default useForm;
-```

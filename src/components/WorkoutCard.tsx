@@ -55,4 +55,3 @@ const WorkoutCard: React.FC<WorkoutCardProps> = ({
 };
 
 export default WorkoutCard;
-```
