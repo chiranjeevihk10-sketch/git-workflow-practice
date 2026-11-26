@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div class="hero-icon" align="center">
   <img src="https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/ec559a9f6bfd399b82bb44393651661b08aaf7ba/icons/folder-markdown-open.svg" width="100" />
 </div>
@@ -156,3 +157,6 @@ For any questions or concerns regarding this AI-generated MVP, please contact Co
 <img src="https://img.shields.io/badge/Finalist-Backdrop_Build_v4%2C_v6-black" alt="Backdrop Build Finalist">
 </div>
 ```
+=======
+# git-workflow-practice
+>>>>>>> practice/main
