@@ -84,4 +84,3 @@ export class GoalService {
 }
 
 export const goalService = new GoalService();
-```

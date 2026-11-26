@@ -66,4 +66,3 @@ class GoalController {
 }
 
 export const goalController = new GoalController();
-```

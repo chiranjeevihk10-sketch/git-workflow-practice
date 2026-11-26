@@ -4,11 +4,11 @@ import { Box, Typography, Grid, Container, Button, TextField } from '@mui/materi
 import Input from '../components/Input';
 import GoalCard from '../components/GoalCard';
 import { createGoal, getGoals, deleteGoal, updateGoal } from '../services/goals';
-import { useAuthContext } from '../hooks/useAuthContext';
+import useAuth from '../hooks/useAuth';
 
 const Goals: React.FC = () => {
     const navigate = useNavigate();
-    const { user } = useAuthContext();
+    const { user } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
     const [goals, setGoals] = useState<any[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -176,4 +176,3 @@ const Goals: React.FC = () => {
 };
 
 export default Goals;
-```

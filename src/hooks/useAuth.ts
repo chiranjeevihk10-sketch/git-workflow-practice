@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { login, logout, LoginRequest } from '../services/auth';
+import { login as loginService, logout as logoutService, LoginRequest } from '../services/auth';
 
 interface User {
   _id: string;
@@ -15,15 +15,15 @@ const useAuth = (): {
   loading: boolean;
   error: string | null;
 } => {
-  const { user: contextUser, setUser, setToken, setLoading, setError } = useContext(AuthContext);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+const { user: contextUser, setUser, setToken } = useContext(AuthContext);
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState<string | null>(null);
 
   const login = async (credentials: LoginRequest) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await login(credentials);
+      const response = await loginService(credentials);
       if (response.success && response.data) {
         setUser(response.data.user);
         setToken(response.data.token);
@@ -50,4 +50,3 @@ const useAuth = (): {
 };
 
 export default useAuth;
-```

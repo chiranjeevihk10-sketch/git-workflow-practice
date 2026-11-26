@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import GoalCard from '../components/GoalCard';
 import WorkoutCard from '../components/WorkoutCard';
 import { getGoals, getRecentWorkouts } from '../services/api';
-import { useAuthContext } from '../hooks/useAuthContext';
+import useAuth from '../hooks/useAuth';
 
 const Dashboard: React.FC = () => {
     const navigate = useNavigate();
-    const { user } = useAuthContext();
+    const { user } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
     const [goals, setGoals] = useState<any[]>([]);
     const [recentWorkouts, setRecentWorkouts] = useState<any[]>([]);
@@ -82,4 +82,3 @@ const Dashboard: React.FC = () => {
 
 export default Dashboard;
 
-```

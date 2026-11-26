@@ -46,4 +46,3 @@ const GoalCard: React.FC<GoalCardProps> = ({ id, title, type, target, progress, 
 };
 
 export default GoalCard;
-```

@@ -43,4 +43,3 @@ workoutRouter.delete('/:workoutId', authenticateToken, async (req: Request, res:
 
 export { workoutRouter };
 
-```

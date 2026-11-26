@@ -21,4 +21,3 @@ const goalSchema: Schema<Goal> = new Schema({
 
 const Goal = mongoose.model<Goal>('Goal', goalSchema);
 export default Goal;
-```

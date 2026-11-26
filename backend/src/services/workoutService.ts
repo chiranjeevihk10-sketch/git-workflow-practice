@@ -72,4 +72,3 @@ export class WorkoutService {
 
 export const workoutService = new WorkoutService();
 
-```

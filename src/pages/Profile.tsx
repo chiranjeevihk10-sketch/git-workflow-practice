@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Grid, Box, TextField, Button, CircularProgress } from '@mui/material';
-import { useAuthContext } from '../hooks/useAuthContext';
+import { default as useAuth } from '../hooks/useAuth';
 import Input from '../components/Input';
 import { updateUserProfile, getUserProfile } from '../services/api';
 
 const Profile: React.FC = () => {
     const navigate = useNavigate();
-    const { user } = useAuthContext();
+    const { user } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [userProfile, setUserProfile] = useState<any | null>(null);
@@ -96,4 +96,3 @@ const Profile: React.FC = () => {
 };
 
 export default Profile;
-```

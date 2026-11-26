@@ -35,4 +35,3 @@ export const login = async (credentials: LoginRequest): Promise<ApiResponse<Logi
   }
 };
 
-```

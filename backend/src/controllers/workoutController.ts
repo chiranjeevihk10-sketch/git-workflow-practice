@@ -51,4 +51,3 @@ class WorkoutController {
 
 export const workoutController = new WorkoutController();
 
-```

@@ -1,6 +1,5 @@
-import { createContext, useState, useEffect, ReactNode, useContext } from 'react';
-import useAuth from '../hooks/useAuth';
-import { LoginRequest } from '../services/auth';
+import { createContext, useState, useEffect, ReactNode } from 'react';
+import { login as loginService, LoginRequest } from '../services/auth';
 
 interface User {
   _id: string;
@@ -26,50 +25,53 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const { user, login, logout, loading, error, isAuthenticated } = useAuth();
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [authLoading, setAuthLoading] = useState(true);
-  const [authError, setAuthError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
       setToken(storedToken);
     }
-    setAuthLoading(false);
   }, []);
 
-
-  useEffect(() => {
-    if (isAuthenticated && token) {
-      localStorage.setItem('token', token)
+  const login = async (credentials: LoginRequest) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await loginService(credentials);
+      if (response.success && response.data) {
+        setUser(response.data.user as User);
+        setToken(response.data.token);
+        localStorage.setItem('token', response.data.token);
+      } else {
+        setError(response.error);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Login failed');
+    } finally {
+      setLoading(false);
     }
-  }, [isAuthenticated, token])
+  };
 
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem('token');
+  };
 
   const contextValue: AuthContextProps = {
     user,
-    loading: authLoading || loading,
-    error: authError || error,
-    login: async (credentials) => {
-      setAuthLoading(true);
-      setAuthError(null);
-      try {
-          await login(credentials);
-      } catch (e: any) {
-          setAuthError(e.message || 'Login Failed');
-      } finally {
-          setAuthLoading(false);
-      }
-    },
-    logout: () => {
-      localStorage.removeItem('token');
-      setToken(null);
-    },
+    loading,
+    error,
+    login,
+    logout,
     setToken,
     setUser,
-    setLoading: setAuthLoading,
-    setError: setAuthError,
+    setLoading,
+    setError,
   };
 
   return (
@@ -78,4 +80,3 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-```

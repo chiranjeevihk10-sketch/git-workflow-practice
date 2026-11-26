@@ -12,4 +12,3 @@ goalRouter.get('/:goalId/progress', authenticateToken, goalController.getGoalPro
 
 export { goalRouter };
 
-```

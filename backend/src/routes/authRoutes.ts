@@ -8,4 +8,3 @@ authRouter.post('/login', login);
 
 export { authRouter };
 
-```

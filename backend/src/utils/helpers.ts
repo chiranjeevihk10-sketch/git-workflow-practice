@@ -98,4 +98,3 @@ export const verifyAuthToken = (token: string): { userId: string } => {
         throw new CustomError('Invalid or expired auth token.', 401);
     }
 };
-```

@@ -94,4 +94,3 @@ const GoalProgressChart: React.FC<GoalProgressChartProps> = ({ goalId, chartType
 };
 
 export default GoalProgressChart;
-```

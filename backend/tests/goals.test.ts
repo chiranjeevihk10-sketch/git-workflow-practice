@@ -107,4 +107,3 @@ test('should throw an error if fetching goal progress fails due to invalid ID', 
   await expect(goalService.getGoalProgress('invalidid')).rejects.toThrow('Goal not found');
 });
 
-```

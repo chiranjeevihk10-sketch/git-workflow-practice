@@ -32,4 +32,3 @@ const MyButton: React.FC<ButtonProps> = ({ text, onClick, variant = 'contained',
 };
 
 export default MyButton;
-```

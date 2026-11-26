@@ -33,4 +33,3 @@ const ShareButton: React.FC<ShareButtonProps> = ({ progress, goalTitle }) => {
 };
 
 export default ShareButton;
-```

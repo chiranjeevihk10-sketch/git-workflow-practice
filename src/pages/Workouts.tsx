@@ -4,11 +4,11 @@ import { Box, Typography, Grid, Container, Button, TextField } from '@mui/materi
 import Input from '../components/Input';
 import WorkoutCard from '../components/WorkoutCard';
 import { createWorkout, getWorkouts, deleteWorkout, updateWorkout } from '../services/workouts';
-import { useAuthContext } from '../hooks/useAuthContext';
+import useAuth from '../hooks/useAuth';
 
 const Workouts: React.FC = () => {
     const navigate = useNavigate();
-    const { user } = useAuthContext();
+    const { user } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
     const [workouts, setWorkouts] = useState<any[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -175,4 +175,3 @@ const Workouts: React.FC = () => {
 };
 
 export default Workouts;
-```

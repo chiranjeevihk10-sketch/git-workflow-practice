@@ -61,4 +61,3 @@ const getGoalProgress = async (goalId: string): Promise<ApiResponse<{ dates: Dat
   };
 
 export { createGoal, getGoals, updateGoal, deleteGoal, getGoalProgress };
-```

@@ -138,6 +138,6 @@ async function updateUserProfile(userId: string, updatedUserData: any): Promise<
   }
 }
 
+export { api };
 export { login, register, createGoal, getGoals, updateGoal, deleteGoal, createWorkout, getWorkouts, updateWorkout, deleteWorkout, getRecentWorkouts, getUserProfile, updateUserProfile, getGoalProgress };
 
-```
